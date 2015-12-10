@@ -4,7 +4,20 @@ from bs4 import BeautifulSoup
 from urllib import urlopen
 
 gauth = GoogleAuth()
-gauth.LocalWebserverAuth()
+# gauth.LocalWebserverAuth()
+
+gauth.LoadCredentialsFile("credentials.json")
+if gauth.credentials is None:
+    # Authenticate if they're not there
+    gauth.LocalWebserverAuth()
+elif gauth.access_token_expired:
+    # Refresh them if expired
+    gauth.Refresh()
+else:
+    # Initialize the saved creds
+    gauth.Authorize()
+# Save the current credentials to a file
+gauth.SaveCredentialsFile("credentials.json")
 
 drive = GoogleDrive(gauth)
 
